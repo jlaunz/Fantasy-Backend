@@ -14,7 +14,7 @@ const port = config.get("port") || 1000
 
 //Connect to mongodb
 const mongoUri = config.get("mongoDBURI")
-mongoose.connect(mongoUri, {useNewUrlParser: true , dbName: 'appdata'})
+mongoose.connect(mongoUri, {useNewUrlParser: true , dbName: 'spotify-party'})
 const db = mongoose.connection;
 
 // Checking the DB connection

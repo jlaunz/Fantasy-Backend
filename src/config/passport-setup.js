@@ -2,6 +2,7 @@ require('dotenv').config()
 const passport = require("passport")
 const SpotifyStrategy = require("passport-spotify").Strategy
 const Host = require("../models/host")
+const config = require("config")
 
 passport.serializeUser(function(user, done) {
     done(null, user);
@@ -15,7 +16,7 @@ passport.use(
     new SpotifyStrategy({
         clientID: process.env.SPOTIFY_CLIENT_ID,
         clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-        callbackURL: process.env.SPOTIFY_CALLBACK_URL
+        callbackURL: config.get("spotify.callbackURL")
     }, async (accessToken, refreshToken, expires_in, profile, done)=> {
         let user = false;
         try{

@@ -7,7 +7,7 @@ import host from '../src/models/host'
 import cookieParser from 'cookie-parser'
 
 let server, mongo, app
-let prefix = "http://localhost:8080"
+let prefix = "http://localhost:3000"
 
 describe('Tests for /party endpoints', ()=>{
     beforeAll(async done =>{
