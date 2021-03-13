@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const HostModel = require('../src/models/Host')
 const assert = require('assert')
 
-const mongo_uri = process.env.MONGODB_URI
+const mongo_uri = config.get("mongoDBURI")
 
 describe('Test for adding and editing playlists users in mongodb', ()=>{
     beforeAll(async ()=>{

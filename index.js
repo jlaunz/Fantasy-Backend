@@ -1,4 +1,5 @@
 require('dotenv').config()
+const config = require("config")
 const express = require('express')
 const mongoose = require('mongoose')
 const passport = require('passport')
@@ -9,10 +10,10 @@ require("./src/config/passport-setup")
 
 // Setup Express
 const app = express();
-const port = process.env.PORT || 1000
+const port = config.get("port") || 1000
 
 //Connect to mongodb
-const mongoUri = process.env.MONGODB_URI
+const mongoUri = config.get("mongoDBURI")
 mongoose.connect(mongoUri, {useNewUrlParser: true , dbName: 'appdata'})
 const db = mongoose.connection;
 
@@ -51,3 +52,6 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => console.log(`App server listening on port ${port}!`));
+
+
+console.log("====================\n", config.get("env_message") + "\nMongoDB URI: " + config.get("mongoDBURI"))

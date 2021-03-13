@@ -1,0 +1,4 @@
+{
+    "env_message": "in test env",
+    "mongoDBURI": "mongodb://localhost/spotify-party"
+}
