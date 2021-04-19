@@ -1,0 +1,7 @@
+{
+    "env_message": "in test env",
+    "mongoDBURI": "mongodb://localhost:27017/spotify-party-test",
+    "spotify": {
+        "callbackURL": "http://localhost:3000/auth/spotify/callback/"
+    }
+}

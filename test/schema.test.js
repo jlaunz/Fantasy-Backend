@@ -1,4 +1,5 @@
 require('dotenv').config()
+const config = require('config')
 const mongoose = require('mongoose')
 const HostModel = require('../src/models/Host')
 const assert = require('assert')
@@ -7,13 +8,12 @@ const mongo_uri = config.get("mongoDBURI")
 
 describe('Test for adding and editing playlists users in mongodb', ()=>{
     beforeAll(async ()=>{
-        await mongoose.connect(mongo_uri, {useNewUrlParser: true, dbName: 'test', useFindAndModify: false}, 
-        async (err)=>{
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-        })
+        try{
+            await mongoose.connect(mongo_uri, {useNewUrlParser: true, dbName: 'test', useFindAndModify: false})
+        }catch(err){
+            console.error(err);
+            process.exit(1);
+        }
     })
 
     beforeEach(async () =>{
@@ -33,14 +33,20 @@ describe('Test for adding and editing playlists users in mongodb', ()=>{
             tracks: tracks
         }
 
-        await new HostModel({
+        let mockDoc = new HostModel({
             id:"234",
             party: party
-        }).save()
+        })
+        await mockDoc.save()
+    })
+    
+    afterEach(async () =>{
+        await HostModel.remove({})
     })
 
-    afterEach(async () =>{
-        await  mongoose.connection.db.dropCollection('hosts')
+    afterAll(async ()=>{
+        await mongoose.connection.dropDatabase()
+        await mongoose.connection.close()
     })
 
     it('initialise new host successfully', async ()=>{
@@ -57,13 +63,12 @@ describe('Test for adding and editing playlists users in mongodb', ()=>{
         })
 
         let savedHost = await validHost.save()
-        assert.equal(savedHost.id, validHost.id)
+        expect(savedHost.id).toBe(validHost.id)
     })
 
     it('find host by id', async ()=>{
-        await HostModel.findOne({id:'234'}).then(host =>{
-            assert(host.id === '234')
-        })
+        let host = await HostModel.findOne({id:'234'})
+        expect(host.id).toBe('234')
     })
 
     it('create host with duplicate id and throw error', async ()=>{
@@ -71,17 +76,16 @@ describe('Test for adding and editing playlists users in mongodb', ()=>{
             id: '234',
         })
 
-        await duplicateHost.save(function (err) {
-            assert(err.name == 'ValidationError');
-        });
+        let ccc = await duplicateHost.save();
+        console.log("========\n" + ccc + "\n====")
+
+
     })
 
     it('delete host successfully', async ()=>{
-        await HostModel.deleteOne({id: '234'}).then(async ()=>{
-            await HostModel.findOne({id:'234'}, (err, host) => {
-                assert(host  === null)
-            })
-        })
+        await HostModel.deleteOne({id: '234'})
+        let result = await HostModel.findOne({id:'234'})
+        expect( result ).toBeNull()
     })
 
     it('add track to party successfully', async()=>{
@@ -97,52 +101,49 @@ describe('Test for adding and editing playlists users in mongodb', ()=>{
         await HostModel.findOneAndUpdate(
             { id: "234"},
             { $push: {'party.tracks': track }}
-            ).then(async ()=>{
-                await HostModel.findOne({id:"234"}).then((result)=>{
-                    assert.equal(result.party.tracks.length, 2)
-                })
-        })
+            )
+
+        let result = await HostModel.findOne({id:"234"})
+        expect(result).not.toBeNull()
+        expect(result.party).not.toBeNull()
+        expect(result.party.tracks).not.toBeNull()
+        expect(result.party.tracks.length).toBe(2)
+        
     })
 
     it('get tracks from party given user id and party id successfully', async()=>{
-        await HostModel.aggregate([
+        let result = await HostModel.aggregate([
             { "$match": { id: "234"} },
             { "$unwind": "$party.tracks"},
             { "$group": {_id: null ,tracks: {"$push": "$party.tracks"}}},
             { "$project": {tracks: 1 , _id: 0} }
-        ]).then((result)=>{
-            assert(result.length === 1)
-        })
+        ])
+        
+        expect(result).not.toBeNull()
+        expect(result.length).toBe(1)
     })
 
     it('delete track from party successfully given uri', async()=>{
         await HostModel.findOneAndUpdate(
             {id: "234"},
             {"$pull": {"party.tracks": {uri: "testUri" }}}
-        ).then( async ()=>{
-            await HostModel.findOne(
-                {id:"234"}
-            ).then(result=>{
-                assert.equal(result.party.tracks.length,0)
-            })
-        })
+        )
+        
+        let result = await HostModel.findOne({id:"234"})
+        expect(result).not.toBeNull()
+        expect(result.party.tracks.length).toBe(0)
+
     })
 
     it('delete party successfully', async()=>{
         await HostModel.findOneAndUpdate(
             { id: "234" },
             { $unset: {party:1} }
-        ).then(async ()=>{
-            await HostModel.findOne(
-                {id:"234"}
-            ).then(result=>{
-                assert.equal(result.party,null)
-            })
-        })
+        )
+        let result = await HostModel.findOne({id:"234"})
+
+        expect(result.party).toBeUndefined()
     })
 
-    afterAll(async ()=>{
-        await mongoose.connection.dropDatabase()
-        await mongoose.connection.close()
-    })
+
 })

@@ -19,7 +19,7 @@ describe('Tests for /party endpoints', ()=>{
         app.use(express.json())
         app.use(cookieParser())
         app.use("/party", partyRoutes)
-        server = app.listen(8080, ()=> done())
+        server = app.listen(3000, ()=> done())
     })
 
     afterAll(async done =>{
