@@ -1,8 +1,0 @@
-{
-    "env_message": "lol, in default env",
-    "port": 3000,
-    "mongoDBURI": "mongodb+srv: //admin:750732SECS@spotifyparty-8nt83.mongodb.net",
-    "spotify": {
-        "callbackURL": "http://www.notimplemented.com:3000/auth/spotify/callback/"
-    }
-}
