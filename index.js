@@ -10,7 +10,7 @@ require('./src/config/passport-setup')
 
 // Setup Express
 const app = express()
-const port = 1000 | process.env.PORT
+const port = 1000 || process.env.PORT
 
 //Connect to mongodb
 const mongoUri = process.env.MONGODB_URI
