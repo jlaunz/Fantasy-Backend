@@ -20,7 +20,7 @@ router.get(
     passport.authenticate('spotify', { session: false }),
     (req, res) => {
         res.cookie('user', req.user.id, {
-            expires: new Date(Date.now() + 3600 * 24 * 7),
+            expires: new Date(Date.now() + 1000 * 3600 * 24 * 7),
         })
         res.redirect(process.env.CLIENT_URL)
     }
