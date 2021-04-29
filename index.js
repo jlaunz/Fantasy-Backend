@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 const config = require('config')
 const express = require('express')
 const mongoose = require('mongoose')
@@ -10,7 +10,7 @@ require('./src/config/passport-setup')
 
 // Setup Express
 const app = express()
-const port = 1000 || process.env.PORT
+const port = process.env.PORT || 1000
 
 //Connect to mongodb
 const mongoUri = process.env.MONGODB_URI
