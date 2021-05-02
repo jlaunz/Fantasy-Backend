@@ -51,4 +51,16 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-app.listen(port, () => console.log(`App server listening on port ${port}!`))
+const server = app.listen(port, () =>
+    console.log(`App server listening on port ${port}!`)
+)
+
+const io = require('socket.io')(server)
+
+io.on('connection', (socket) => {
+    socket.on('change_request', () => {
+        socket.emit('Sever received changing message !!!')
+        //Notify other clients
+        socket.broadcast.emit('refresh_play_list')
+    })
+})

@@ -1,7 +1,7 @@
 require('dotenv').config()
 const passport = require('passport')
 const SpotifyStrategy = require('passport-spotify').Strategy
-const Host = require('../models/host')
+const Host = require('../models/Host')
 const config = require('config')
 
 passport.serializeUser(function (user, done) {

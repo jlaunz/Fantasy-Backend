@@ -1,7 +1,7 @@
 const express = require('express')
 const passport = require('passport')
 const router = express.Router()
-const Host = require('../models/host')
+const Host = require('../models/Host')
 
 router.get(
     '/spotify',
